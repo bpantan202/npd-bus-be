@@ -4,7 +4,7 @@ const roundSchema = new mongoose.Schema(
   {
     route_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Route_Info",
+      ref: "route_info",
       required: true,
     },
 

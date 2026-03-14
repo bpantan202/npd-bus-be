@@ -58,10 +58,18 @@ export const deleteBooking = async (req: Request, res: Response) => {
 // GET all bookings
 export const getAllBookings = async (req: Request, res: Response) => {
   try {
-    const bookings = await Booking.find().populate("round_id").populate({
-      path: "user_id",
-      select: "username",
-    });
+    const bookings = await Booking.find()
+      .populate({
+        path: "round_id",
+        populate: {
+          path: "route_id",
+          select: "origin destination",
+        },
+      })
+      .populate({
+        path: "user_id",
+        select: "username",
+      });
 
     const result = bookings.map(decryptBooking);
 
@@ -80,7 +88,13 @@ export const getBookingByCode = async (req: Request, res: Response) => {
     const booking = await Booking.findOne({
       booking_code: booking_code,
     })
-      .populate("round_id")
+      .populate({
+        path: "round_id",
+        populate: {
+          path: "route_id",
+          select: "origin destination",
+        },
+      })
       .populate({
         path: "user_id",
         select: "username",
@@ -120,9 +134,15 @@ export const getMyBookings = async (req: Request, res: Response) => {
     const userId = (req as any).userId;
 
     const bookings = await Booking.find({
-      user_id: userId,
+      user_id: { $eq: userId, $ne: null },
     })
-      .populate("round_id")
+      .populate({
+        path: "round_id",
+        populate: {
+          path: "route_id",
+          select: "origin destination",
+        },
+      })
       .populate({
         path: "user_id",
         select: "username",
@@ -155,10 +175,18 @@ export const searchPassengerBookings = async (req: Request, res: Response) => {
       };
     }
 
-    const bookings = await Booking.find(query).populate("round_id").populate({
-      path: "user_id",
-      select: "username",
-    });
+    const bookings = await Booking.find(query)
+      .populate({
+        path: "round_id",
+        populate: {
+          path: "route_id",
+          select: "origin destination",
+        },
+      })
+      .populate({
+        path: "user_id",
+        select: "username",
+      });
 
     const result = bookings.map(decryptBooking);
 
